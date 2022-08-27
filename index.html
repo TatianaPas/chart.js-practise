@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Display data in the chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+
+<div style="position: relative; height:40vh; width:80vw">
+  <canvas id="myChart" ></canvas>
+</div>
+
+
+    <script>
+
+    chartIt();
+
+    async function chartIt() {
+    const dataChart=  await getData();
+
+      const data = {
+        labels: dataChart.xs,
+        datasets: [{
+          label: 'Combined Land-Surface Air and Sea-Surface Water Temperature in C',
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: dataChart.ys,
+        }]
+      };
+
+      const config = {
+        type: 'line',
+        data: data,
+        options: {}
+      };
+
+      const myChart = new Chart(
+   document.getElementById('myChart'),
+   config
+ );
+    }
+
+
+       async function getData() {
+         const xs=[];
+         const ys = [];
+
+
+        const response = await fetch('ZonAnn.Ts+dSST.csv');
+        const data = await response.text();
+
+
+        const table = data.split('\n').slice(1);
+        table.forEach(row => {
+            const columns = row.split(',');
+            const year = columns[0];
+            xs.push(year);
+            const temp = columns[1];
+            ys.push(parseFloat(temp)+14);
+            console.log(year,temp);
+        });
+        return {xs, ys};
+
+       }
+
+
+
+
+
+
+    </script>
+</body>
+</html>
